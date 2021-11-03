@@ -1,10 +1,13 @@
 package p2;
 
+import com.csvreader.CsvReader;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -66,6 +69,11 @@ class JabberClientThread extends Thread {
         ventana_chat.setSize(350, 225);
         ventana_chat.setVisible(true);
         ventana_chat.setResizable(false);
+        area_chat.setText("1. No digite letras" + 
+                          "\n" +
+                          "2.Digite solo números de [0,9]" + 
+                          "\n" + 
+                          "3. Utilice solo los operandos de +,-,*,/,%");
     }
 
     public static int threadCount() {
@@ -112,6 +120,7 @@ class JabberClientThread extends Thread {
         try {
             while(true){
                 btn_enviar.addActionListener((ActionEvent e) -> {
+                    area_chat.setText(null);
                     String enviar_msg = txt_msg.getText(); //Obtengo el mensaje en la caja de texto
                     out.println(enviar_msg); //Envío el mensaje
                     txt_msg.setText(null); //Se limpia la caja de texto
@@ -121,21 +130,50 @@ class JabberClientThread extends Thread {
                 btn_historial.addActionListener((ActionEvent event) ->{
                     //ventana_chat.setVisible(false);
                     ventana_historial = new JFrame("Historial");
-                    btn_back = new JButton("Back");
+                    //btn_back = new JButton("Back");
                     area_historial = new JTextArea(10,12);
                     scroll = new JScrollPane(area_historial);
                     contenedor_areahistorial = new JPanel();
                     contenedor_areahistorial.setLayout(new GridLayout(1, 1));
                     contenedor_areahistorial.add(scroll);
-                    contenedor_btnback = new JPanel();
-                    contenedor_btnback.setLayout(new GridLayout(1, 2));
-                    contenedor_btnback.add(btn_back);
+                    //contenedor_btnback = new JPanel();
+                    //contenedor_btnback.setLayout(new GridLayout(1, 2));
+                    //contenedor_btnback.add(btn_back);
                     ventana_historial.setLayout(new BorderLayout());
                     ventana_historial.add(contenedor_areahistorial, BorderLayout.NORTH);
-                    ventana_historial.add(contenedor_btnback, BorderLayout.SOUTH);
+                    //ventana_historial.add(contenedor_btnback, BorderLayout.SOUTH);
                     ventana_historial.setSize(350,225);
                     ventana_historial.setVisible(true);
                     ventana_historial.setResizable(false);
+                    
+                    //Import data from csv file
+                    try{
+                        List<User> users = new ArrayList<>();//list to save data from file
+
+                        CsvReader readUser = new CsvReader("Users.csv");
+                        readUser.readHeaders();
+
+                        // while it has lines we get data file
+                        while (readUser.readRecord()) {
+                            String operation = readUser.get(0);
+                            String result = readUser.get(1);
+                            String date = readUser.get(2);
+
+                            users.add(new User(operation, result , date)); // add info to the list
+                            System.out.println(operation);
+                            System.out.println(result);
+                            System.out.println(date);
+                        }
+                       //readUser.close();
+                        String file = "";
+                        for (User user : users){
+                            file += user.getOp() + user.getResult() + user.getDate() + "\n";
+                        }
+                        area_historial.setText("Operation  Result  Date" + "\n" + file);
+                    }catch(FileNotFoundException e){
+                        e.printStackTrace();
+                    }catch(IOException e){
+                    }
                 });
                 
                 /*btn_back.addActionListener((ActionEvent event) -> {

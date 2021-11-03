@@ -1,11 +1,9 @@
 package p2;
 
-import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -50,67 +48,43 @@ class ServeOneJabber extends Thread {
       boolean exists = new File(outputFile).exists(); //verifies if exists
 
       //If exists a file called like this it erease it
-      if(exists){
+      /*if(exists){
           File usersFile = new File(outputFile);
           usersFile.delete();
-      }
+      }*/
       try {
           //creates the file
-          CsvWriter outputCSV = new CsvWriter(new FileWriter(outputFile, true), '.');
+          CsvWriter outputCSV = new CsvWriter(new FileWriter(outputFile, true), ',');
           //Data to identify
-          outputCSV.write("Opeartion");
-          outputCSV.write("Result");
-          outputCSV.write("Date");
+          outputCSV.write("");
+          outputCSV.write("");
+          outputCSV.write("");
+          //outputCSV.write("\n");
 
-          outputCSV.endRecord();//stops typing 
+          outputCSV.endRecord();//stops typing
 
           //roam the list
           for (User user :users ){
-              outputCSV.write(user.getName());
-              outputCSV.write(user.getPhone());
-              outputCSV.write(user.getEmail());
+              outputCSV.write(user.getOp());
+              outputCSV.write(user.getResult());
+              outputCSV.write(user.getDate());
 
-              outputCSV.endRecord();// stop ty[ing on file
+              outputCSV.endRecord();// stop tying on file
           }
 
           outputCSV.close();//close file
+          
       } catch (IOException e) {
       }
     }
     
-    public static void ImportCSV(){
-        try{
-            List<User> users = new ArrayList<User>();//list to save data from file
-            
-            CsvReader readUser = new CsvReader("Users.csv");
-            readUser.readHeaders();
-            
-            // while it has lines we get data file
-            while (readUser.readRecord()) {
-                String name = readUser.get(0);
-                String phone = readUser.get(1);
-                String email = readUser.get(2);
-             
-                users.add(new User(name, phone , email)); // add info to the list
-            }
-           // readUser.close();
-            
-            for (User user : users){
-                System.out.println(user.getName()+ " "
-                + user.getPhone()+","
-                + user.getEmail());
-                
-            }
-        }catch(FileNotFoundException e){
-        }catch(IOException e){
-        }
-    }
     @Override
     public void run() {
        
         try {
             while (true) {
-                 List<User> users = new ArrayList<>();
+                List<User> users = new ArrayList<>();
+                
                 String msg_recibido = in.readLine(); //Leo todo lo que envíe el socket sc
                 
                 int string_len = msg_recibido.length();
@@ -125,10 +99,10 @@ class ServeOneJabber extends Thread {
                     postorder(root);
                     System.out.println("\n");
 
-
                     out.println("Respuesta: " + GFG.result);
-                    String answer= GFG.result+"";
-                    users.add(new User(msg_recibido,answer,actualDate()));
+                    
+                    String answer= GFG.result + ""; //convert result to string
+                    users.add(new User(msg_recibido, answer, actualDate()));
                     ExportCSV(users);
                     
                 }
@@ -147,79 +121,6 @@ class ServeOneJabber extends Thread {
 }
 
 public class MultiJabberServer {
-    
-     /*public static String actualDate(){
-        
-        Date date=new Date();
-        SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/YYYY");
-        
-        return formatDate.format(date);
-    }
-    
-      public static void ExportCSV(List<User> users){
-        String outputFile = "Users.csv";//Name File
-        boolean exists = new File(outputFile).exists(); //verifies if exists
-        
-        //If exists a file called like this it erease it
-        if(exists){
-            File usersFile = new File(outputFile);
-            usersFile.delete();
-        }
-        try {
-            //creates the file
-            CsvWriter outputCSV = new CsvWriter(new FileWriter(outputFile, true), '.');
-            //Data to identify
-            outputCSV.write("Name");
-            outputCSV.write("Phone");
-            outputCSV.write("Email");
-            
-            outputCSV.endRecord();//stops typing 
-            
-            //roam the list
-            for (User user :users ){
-                outputCSV.write(user.getName());
-                outputCSV.write(user.getPhone());
-                outputCSV.write(user.getEmail());
-                
-                outputCSV.endRecord();// stop ty[ing on file
-            }
-            
-            outputCSV.close();//close file
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public static void ImportCSV(){
-        try{
-            List<User> users = new ArrayList<>();//list to save data from file
-            
-            CsvReader readUser = new CsvReader("Users.csv");
-            readUser.readHeaders();
-            
-            // while it has lines we get data file
-            while (readUser.readRecord()) {
-                String name = readUser.get(0);
-                String phone = readUser.get(1);
-                String email = readUser.get(2);
-             
-                users.add(new User(name, phone , email)); // add info to the list
-            }
-           // readUser.close();
-            
-            for (User user : users){
-                System.out.println(user.getName()+ " "
-                + user.getPhone()+","
-                + user.getEmail());
-                
-            }
-        }catch(FileNotFoundException e){
-            e.printStackTrace(); 
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }*/
-
     static final int PORT = 8080;
 
     public static void main(String[] args) throws IOException {
