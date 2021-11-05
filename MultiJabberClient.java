@@ -15,6 +15,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+/**
+ * This is the main class, It makes work the client connection
+ * @author Andrés & Adrián
+ */
 class JabberClientThread extends Thread {
 
     private Socket socket;
@@ -23,7 +27,7 @@ class JabberClientThread extends Thread {
     private static int counter = 1;
     public int id = counter++;
     private static int threadcount = 0;
-    public String msg_recibido;
+    public String msg_received;
 
     //Creación de objetos
     JFrame ventana_chat = null;
@@ -36,17 +40,20 @@ class JabberClientThread extends Thread {
     JScrollPane scroll = null;
     ServerSocket servidor = null;
     Socket sc = null;
-    BufferedReader lector = null;
-    PrintWriter escritor = null;
+    //BufferedReader lector = null;
+    //PrintWriter escritor = null;
     
     //historial
     JFrame ventana_historial = null;
-    JButton btn_back = null;
+    //JButton btn_back = null;
     JTextArea area_historial= null;
     JPanel contenedor_areahistorial=null;
     JScrollPane scroll_historial = null;
     JPanel contenedor_btnback = null;
 
+    /**
+     * This class is for create the programs interface
+     */
     public void hacerInterfaz() {
         //Aquí se construye la interfaz de usuario
         ventana_chat = new JFrame("Client");
@@ -76,10 +83,14 @@ class JabberClientThread extends Thread {
                           "3. Utilice solo los operandos de +,-,*,/,%");
     }
 
-    public static int threadCount() {
+/*    public static int threadCount() {
         return threadcount;
-    }
+    }*/
 
+    /**
+     * It starts the connection client to server
+     * @param addr socket
+     */
     public JabberClientThread(InetAddress addr) {
         System.out.println("Making client " + id);
         threadcount++;
@@ -115,6 +126,9 @@ class JabberClientThread extends Thread {
     }
     
     @Override
+    /**
+     * This method keeps the connection between the server and the client
+     */
     public void run() {
         
         try {
@@ -181,10 +195,10 @@ class JabberClientThread extends Thread {
                     ventana_historial.setVisible(false);
                 });*/
                 
-                String msg_recibido = in.readLine(); //Leo todo lo que envíe el socket sc
-                if(msg_recibido != null){
-                    area_chat.append("Servidor envía: " + msg_recibido + "\n"); //Pintamos el mensaje recibido en la ventana
-                    System.out.println("Servidor envía: " + msg_recibido);
+                String msg_received = in.readLine(); //Leo todo lo que envíe el socket sc
+                if(msg_received != null){
+                    area_chat.append("Servidor envía: " + msg_received + "\n"); //Pintamos el mensaje recibido en la ventana
+                    System.out.println("Servidor envía: " + msg_received);
                 }
                
                 /*String msg = txt_msg.getText();
@@ -226,12 +240,19 @@ class JabberClientThread extends Thread {
         }
     }
 }
-
+/**
+ * This is the main class, it creates the cantity of clients we want
+ * @author Andrés & Adrián
+ */
 public class MultiJabberClient {
-   
 
     static final int MAX_THREADS = 1;
-
+/**
+ * Creates the clients
+ * @param args
+ * @throws IOException
+ * @throws InterruptedException 
+ */
     public static void main(String[] args) throws IOException, InterruptedException {
         InetAddress addr = InetAddress.getByName(null);
         int count = 0;
